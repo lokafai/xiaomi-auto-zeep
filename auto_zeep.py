@@ -66,23 +66,26 @@ class StepSubmitter:
     步数提交器
     负责处理所有与步数提交相关的操作
     """
-    def __init__(self):
-        # 创建网络请求会话
-        self.session = requests.Session()
-        
-        # 设置请求头，模拟真实浏览器访问
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.128 Safari/537.36',
-            'Accept': 'application/json, text/javascript, */*; q=0.01',
-            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'Origin': 'https://m.cqzz.top',
-            'Referer': 'https://m.cqzz.top/',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-        
-        # 步数提交的API地址
-        self.base_url = 'https://wzz.wangzouzou.com/motion/api/motion/Xiaomi'
+def __init__(self):
+    # 创建网络请求会话
+    self.session = requests.Session()
+
+    # 从GitHub Secrets读取接口Token
+    self.token = os.getenv('CXZJA_TOKEN')
+
+    if not self.token:
+        logger.warning("⚠️ 未找到CXZJA_TOKEN，请检查GitHub Secrets")
+
+    # 新接口请求头
+    self.headers = {
+        'User-Agent': 'Mozilla/5.0',
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': f'Bearer {self.token}'
+    }
+
+    # Zepp Life新接口
+    self.base_url = 'https://api.cxzja.cn/api/mZeppLife'
          
     def get_current_steps(self, account_index=0):
         """
@@ -161,9 +164,9 @@ class StepSubmitter:
              
             # 第二步：准备要发送的数据
             data = {
-                'user': username,     # Zepp Life账号
-                'pass': password,     # Zepp Life密码
-                'steps': str(steps)   # 步数
+                'user': username,    # 账号（手机号或邮箱）
+                'pass': password,      # 密码
+                'steps': str(steps)         # 步数
             }
              
             logger.info(f"🚀 准备提交 - 账号: {username}, 步数: {steps}")
@@ -177,10 +180,9 @@ class StepSubmitter:
             )
              
             # 第四步：处理服务器响应
-            if response.status_code == 200:
-                result = response.json()
-                logger.info(f"接口返回: {result}")
-
+if response.status_code == 200:
+    result = response.json()
+    logger.info(f"接口返回: {result}")
                 if result.get('code') == 200:
                     return True, f"✅ 提交成功! 步数: {steps}"
                 else:
