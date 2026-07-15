@@ -161,9 +161,9 @@ class StepSubmitter:
              
             # 第二步：准备要发送的数据
             data = {
-                'phone': username,    # 账号（手机号或邮箱）
-                'pwd': password,      # 密码
-                'num': steps         # 步数
+                'user': username,     # Zepp Life账号
+                'pass': password,     # Zepp Life密码
+                'steps': str(steps)   # 步数
             }
              
             logger.info(f"🚀 准备提交 - 账号: {username}, 步数: {steps}")
@@ -179,6 +179,8 @@ class StepSubmitter:
             # 第四步：处理服务器响应
             if response.status_code == 200:
                 result = response.json()
+                logger.info(f"接口返回: {result}")
+
                 if result.get('code') == 200:
                     return True, f"✅ 提交成功! 步数: {steps}"
                 else:
