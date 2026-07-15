@@ -180,9 +180,9 @@ def __init__(self):
             )
              
             # 第四步：处理服务器响应
-if response.status_code == 200:
-    result = response.json()
-    logger.info(f"接口返回: {result}")
+            if response.status_code == 200:
+                result = response.json()
+                logger.info(f"接口返回: {result}")
                 if result.get('code') == 200:
                     return True, f"✅ 提交成功! 步数: {steps}"
                 else:
